@@ -11,9 +11,6 @@ resource "aws_s3_bucket" "website_bucket" {
   }
   # ❌ remove this: acl = "public-read"
 
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "aws_s3_bucket_public_access_block" "allow_public_access" {
