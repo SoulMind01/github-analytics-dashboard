@@ -32,9 +32,10 @@ resource "aws_s3_bucket_policy" "public_read" {
       Effect    = "Allow",
       Principal = "*",
       Action    = "s3:GetObject",
-      Resource  = "${aws_s3_bucket.website_bucket.arn}/*"
+      Resource  = "arn:aws:s3:::githubanalyticsdashboard/*"
     }]
   })
 }
+
 
 
