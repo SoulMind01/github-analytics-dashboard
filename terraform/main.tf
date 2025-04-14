@@ -3,13 +3,17 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "githubanalyticsdashboard"
+  bucket        = "githubanalyticsdashboard"
   force_destroy = true
 
   website {
     index_document = "index.html"
   }
   # ❌ remove this: acl = "public-read"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "allow_public_access" {
