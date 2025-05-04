@@ -37,7 +37,7 @@ def calculate_avg_issue_resolution(issues):
     return None
 
 def get_ci_cd_results(repo):
-    url = f"https://api.github.com/repos/{repo}/pulls"
+    url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page=10"
     return fetch_github_json(url)
 
 
