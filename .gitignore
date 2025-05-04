@@ -11,6 +11,9 @@ crash.log
 /.pnp
 .pnp.js
 
+# bin
+/bin
+
 # testing
 /coverage
 
