@@ -36,7 +36,7 @@ def calculate_avg_issue_resolution(issues):
         return round(sum(resolution_days) / len(resolution_days), 2)
     return None
 
-def get_ci_cd_results(repo):
+def get_pull_requests(repo):
     url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page=10"
     return fetch_github_json(url)
 
@@ -56,7 +56,7 @@ def lambda_handler(event, context):
         issues = get_issues(repo)
 
         avg_resolution = calculate_avg_issue_resolution(issues)
-        ci_cd_results = get_ci_cd_results(repo)
+        pull_requests = get_pull_requests(repo)
         # Mock CI/CD results
         success_count = 87
         failure_count = 13
@@ -67,7 +67,7 @@ def lambda_handler(event, context):
                 "repo": repo,
                 "contributors": contributors,
                 "issues": issues,
-                "ci_cd_results": ci_cd_results,
+                "pull_requests": pull_requests,
                 "avg_issue_resolution_days": avg_resolution,
                 "success_count": success_count,
                 "failure_count": failure_count
