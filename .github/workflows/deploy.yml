@@ -1,7 +1,9 @@
 name: deploy to lambda
-on: [push]
+on: 
+  push:
+    paths:
+      - 'src/lambda_function.py'
 jobs:
-
   deploy:
     name: deploy lambda function
     runs-on: ubuntu-latest
