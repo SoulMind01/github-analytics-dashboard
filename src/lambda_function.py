@@ -20,8 +20,8 @@ def get_contributors(repo):
     url = f"https://api.github.com/repos/{repo}/contributors"
     return fetch_github_json(url)
 
-def get_issues(repo):
-    url = f"https://api.github.com/repos/{repo}/issues?state=all&per_page=100"
+def get_issues(repo, number=100):
+    url = f"https://api.github.com/repos/{repo}/issues?state=all&per_page={number}"
     return fetch_github_json(url)
 
 def calculate_avg_issue_resolution(issues):
@@ -36,16 +36,16 @@ def calculate_avg_issue_resolution(issues):
         return round(sum(resolution_days) / len(resolution_days), 2)
     return None
 
-def get_pull_requests(repo):
-    url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page=10"
+def get_pull_requests(repo, number=10):
+    url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page={number}"
     return fetch_github_json(url)
 
-def get_releases(repo):
-    url = f"https://api.github.com/repos/{repo}/releases"
+def get_releases(repo, number=10):
+    url = f"https://api.github.com/repos/{repo}/releases?per_page={number}"
     return fetch_github_json(url)
 
-def get_commits(repo):
-    url = f"https://api.github.com/repos/{repo}/commits?per_page=100"
+def get_commits(repo, number=10):
+    url = f"https://api.github.com/repos/{repo}/commits?per_page={number}"
     return fetch_github_json(url)
 
 def lambda_handler(event, context):
