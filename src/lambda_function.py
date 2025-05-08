@@ -40,6 +40,13 @@ def get_pull_requests(repo):
     url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page=10"
     return fetch_github_json(url)
 
+def get_releases(repo):
+    url = f"https://api.github.com/repos/{repo}/releases"
+    return fetch_github_json(url)
+
+def get_commits(repo):
+    url = f"https://api.github.com/repos/{repo}/commits?per_page=100"
+    return fetch_github_json(url)
 
 def lambda_handler(event, context):
     try:
@@ -57,6 +64,8 @@ def lambda_handler(event, context):
 
         avg_resolution = calculate_avg_issue_resolution(issues)
         pull_requests = get_pull_requests(repo)
+        releases = get_releases(repo)
+        commits = get_commits(repo)
         # Mock CI/CD results
         success_count = 87
         failure_count = 13
@@ -70,7 +79,9 @@ def lambda_handler(event, context):
                 "pull_requests": pull_requests,
                 "avg_issue_resolution_days": avg_resolution,
                 "success_count": success_count,
-                "failure_count": failure_count
+                "failure_count": failure_count,
+                "releases": releases,
+                "commits": commits,
             })
         }
 
