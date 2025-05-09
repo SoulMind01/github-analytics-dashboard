@@ -23,9 +23,10 @@ const Dashboard = () =>
             {
               repo: repoUrl,
               issuesNumber: "100",
-              commitsNumber: "10",
+              commitsNumber: "100",
               pullRequestsNumber: "10",
               releasesNumber: "0",
+              workflowRunsNumber: "100",
             }
           )
       });
@@ -67,6 +68,7 @@ const Dashboard = () =>
     {
       setProcessedIssues(processAttribute(stats, 'issues'));
       setProcessedPullRequests(processAttribute(stats, 'pull_requests'))
+      setProcessedCommits(processAttribute(stats, 'commits'))
     }
   }, [stats]);
   useEffect(() => 
@@ -101,10 +103,10 @@ const Dashboard = () =>
             title="Contributor Activity"
             chartType="line"
             data={{
-              labels: stats.contributors.map(user => user.login) ?? ['No data'],
+              labels: stats.contributors?.map(user => user.login) ?? ['No data'],
               datasets: [{
                 label: 'Commits',
-                data: stats.contributors.map(user => user.contributions) ?? [0],
+                data: stats.contributors?.map(user => user.contributions) ?? [0],
                 borderColor: 'teal',
                 tension: 0.4,
               }]
@@ -115,7 +117,13 @@ const Dashboard = () =>
             title="Commit Timeline"
             chartType="line"
             data={{
-              labels: stats.commits
+              labels: processedCommits?.map(commit => commit.date) ?? ['No data'],
+              datasets: [{
+                label: 'Commits',
+                data: processedCommits?.map(commit => commit.count) ?? [0],
+                borderColor: 'teal',
+                tension: 0.4,
+              }]
             }}
           />
 
