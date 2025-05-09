@@ -60,15 +60,15 @@ def get_workflow_runs(repo, number=50):
     if number ==0:
         return []
     url = f"https://api.github.com/repos/{repo}/actions/runs?per_page={number}"
-    return fetch_github_json(url)
+    return fetch_github_json(url).get('workflow_runs', [])
 
 def calculate_ci_cd_success_rate(workflow_runs):
     success_count = 0
     failure_count = 0
     for run in workflow_runs:
-        if run["workflow_runs"]["conclusion"] == "success":
+        if run["conclusion"] == "success":
             success_count += 1
-        elif run["workflow_runs"]["conclusion"] == "failure":
+        elif run["conclusion"] == "failure":
             failure_count += 1
     return success_count, failure_count
 
@@ -87,7 +87,7 @@ def lambda_handler(event, context):
         commitsNumber = int(body.get("commitsNumber", 5))
         pullRequestsNumber = int(body.get("pullRequestsNumber", 10))
         releasesNumber = int(body.get("releasesNumber", 0))
-        workflowRunsNumber = int(body.get("workflowRunsNumber", 50))
+        workflowRunsNumber = int(body.get("workflowRunsNumber", 10))
 
         contributors = get_contributors(repo)
         issues = get_issues(repo, issuesNumber)  
