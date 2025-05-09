@@ -67,16 +67,20 @@ def lambda_handler(event, context):
         }
 
     try:
-        contributors = get_contributors(repo)
-        issues = get_issues(repo)
-        pull_requests = get_pull_requests(repo, pullRequestsNumber)
-        releases = get_releases(repo, releasesNumber)
-        commits = get_commits(repo, commitsNumber)
+
         issuesNumber = int(body.get("issuesNumber", 100))
         commitsNumber = int(body.get("commitsNumber", 5))
         pullRequestsNumber = int(body.get("pullRequestsNumber", 10))
         releasesNumber = int(body.get("releasesNumber", 0))
+
+        contributors = get_contributors(repo)
+        issues = get_issues(repo, issuesNumber)  
+        pull_requests = get_pull_requests(repo, pullRequestsNumber)
+        releases = get_releases(repo, releasesNumber)
+        commits = get_commits(repo, commitsNumber)
+
         avg_resolution = calculate_avg_issue_resolution(issues)
+
         # Mock CI/CD results
         success_count = 87
         failure_count = 13
