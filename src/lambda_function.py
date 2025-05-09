@@ -66,9 +66,9 @@ def calculate_ci_cd_success_rate(workflow_runs):
     success_count = 0
     failure_count = 0
     for run in workflow_runs:
-        if run.get("conclusion") == "success":
+        if run["workflow_runs"]["conclusion"] == "success":
             success_count += 1
-        elif run.get("conclusion") == "failure":
+        elif run["workflow_runs"]["conclusion"] == "failure":
             failure_count += 1
     return success_count, failure_count
 
