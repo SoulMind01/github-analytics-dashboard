@@ -68,7 +68,7 @@ def lambda_handler(event, context):
 
     try:
         contributors = get_contributors(repo)
-        issues = get_issues(repo, issuesNumber)
+        issues = get_issues(repo)
         pull_requests = get_pull_requests(repo, pullRequestsNumber)
         releases = get_releases(repo, releasesNumber)
         commits = get_commits(repo, commitsNumber)
