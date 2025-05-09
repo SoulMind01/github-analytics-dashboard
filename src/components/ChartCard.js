@@ -13,11 +13,10 @@ import
   Legend,
 } from 'chart.js';
 
-// ✅ REGISTER ALL ELEMENTS YOU USE
 ChartJS.register(
   LineElement,
   BarElement,
-  ArcElement,         // <-- required for Doughnut/Pie charts
+  ArcElement,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -25,9 +24,8 @@ ChartJS.register(
   Legend
 );
 
-const ChartCard = ({ title, chartType, data }) =>
+const ChartCard = ({ title, chartType, data, notation }) =>
 {
-  console.log(`[ChartCard] Rendering: ${title}`);
   let ChartComponent;
   switch (chartType)
   {
@@ -38,14 +36,13 @@ const ChartCard = ({ title, chartType, data }) =>
       ChartComponent = Line;
   }
 
-  // ✅ Debug logs: what kind of chart, and what data it's getting
-  console.log(`[ChartCard] Rendering "${title}" as a ${chartType} chart`);
-  console.log(`[ChartCard] Data:`, data);
-
+  let logMessage = `[ChartCard] Rendering "${title}" as a ${chartType} chart\n`;
+  console.log(logMessage);
   return (
     <div style={styles.card}>
       <h3 style={styles.title}>{title}</h3>
       <ChartComponent data={data} />
+      {notation && <p style={styles.notation}>{notation}</p>}
     </div>
   );
 };
@@ -62,7 +59,12 @@ const styles = {
   title: {
     marginBottom: '1rem',
     fontSize: '1.25rem',
-  }
+  },
+  notation: {
+    marginTop: '1rem',
+    fontSize: '0.875rem',
+    color: '#555',
+  },
 };
 
 export default ChartCard;
