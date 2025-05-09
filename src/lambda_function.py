@@ -56,6 +56,22 @@ def get_commits(repo, number=10):
     url = f"https://api.github.com/repos/{repo}/commits?per_page={number}"
     return fetch_github_json(url)
 
+def get_workflow_runs(repo, number=50):
+    if number ==0:
+        return []
+    url = f"https://api.github.com/repos/{repo}/actions/runs?per_page={number}"
+    return fetch_github_json(url)
+
+def calculate_ci_cd_success_rate(workflow_runs):
+    success_count = 0
+    failure_count = 0
+    for run in workflow_runs:
+        if run.get("conclusion") == "success":
+            success_count += 1
+        elif run.get("conclusion") == "failure":
+            failure_count += 1
+    return success_count, failure_count
+
 def lambda_handler(event, context):
     try:
         body = json.loads(event.get("body", "{}"))
@@ -67,23 +83,22 @@ def lambda_handler(event, context):
         }
 
     try:
-
         issuesNumber = int(body.get("issuesNumber", 100))
         commitsNumber = int(body.get("commitsNumber", 5))
         pullRequestsNumber = int(body.get("pullRequestsNumber", 10))
         releasesNumber = int(body.get("releasesNumber", 0))
+        workflowRunsNumber = int(body.get("workflowRunsNumber", 50))
 
         contributors = get_contributors(repo)
         issues = get_issues(repo, issuesNumber)  
         pull_requests = get_pull_requests(repo, pullRequestsNumber)
         releases = get_releases(repo, releasesNumber)
         commits = get_commits(repo, commitsNumber)
+        workflow_runs = get_workflow_runs(repo, workflowRunsNumber)
 
         avg_resolution = calculate_avg_issue_resolution(issues)
 
-        # Mock CI/CD results
-        success_count = 87
-        failure_count = 13
+        success_count, failure_count = calculate_ci_cd_success_rate(workflow_runs)
 
         return {
             "statusCode": 200,
