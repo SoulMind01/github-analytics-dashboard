@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import ChartCard from './ChartCard';
-import processIssues from './statProcessor';
+import { processAttribute } from './statProcessor';
 
 const Dashboard = () =>
 {
   const [repoUrl, setRepoUrl] = useState('');
   const [stats, setStats] = useState(null);
   const [processedIssues, setProcessedIssues] = useState(null);
+  const [processedPullRequests, setProcessedPullRequests] = useState(null);
+  const [processedCommits, setProcessedCommits] = useState(null);
+  const [processedReleases, setProcessedReleases] = useState(null);
 
   const handleFetch = async () =>
   {
@@ -15,7 +18,16 @@ const Dashboard = () =>
       const response = await fetch('https://07vyu4znec.execute-api.us-west-1.amazonaws.com/test/github-analytics-dashboard', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repo: repoUrl })
+        body: JSON.stringify
+          (
+            {
+              repo: repoUrl,
+              issuesNumber: "100",
+              commitsNumber: "10",
+              pullRequestsNumber: "10",
+              releasesNumber: "0",
+            }
+          )
       });
 
       console.log("📡 HTTP status:", response.status);
@@ -41,25 +53,27 @@ const Dashboard = () =>
     }
   };
 
-
-
+  // Update stats
   useEffect(() =>
   {
     console.log("Updated stats: ", stats);
     window.stats = stats;
   }, [stats]);
 
-  // Process issues only after `stats` is ready
+  // Process issues, pull requests
   useEffect(() =>
   {
     if (stats)
     {
-      const processed = processIssues(stats);
-      setProcessedIssues(processed);
+      setProcessedIssues(processAttribute(stats, 'issues'));
+      setProcessedPullRequests(processAttribute(stats, 'pull_requests'))
     }
-    window.processedIssues = processedIssues;
   }, [stats]);
-
+  useEffect(() => 
+  {
+    window.processedIssues = processedIssues;
+    window.processedPullRequests = processedPullRequests;
+  }, [processedIssues, processedPullRequests]);
   return (
     <div style={{ padding: '2rem' }}>
       <h1 style={{ textAlign: 'center' }}>GitHub Repository Analytics Dashboard</h1>
@@ -98,6 +112,14 @@ const Dashboard = () =>
           />
 
           <ChartCard
+            title="Commit Timeline"
+            chartType="line"
+            data={{
+              labels: stats.commits
+            }}
+          />
+
+          <ChartCard
             title="Issue Timeline"
             chartType="line"
             data={{
@@ -109,17 +131,19 @@ const Dashboard = () =>
                 tension: 0.4,
               }]
             }}
+            notation={`Average issue resolution days: ${stats.avg_issue_resolution_days}`}
           />
 
           <ChartCard
-            title="Issue Resolution Time"
-            chartType="bar"
+            title="Pull Request Timeline"
+            chartType="line"
             data={{
-              labels: ['Avg Resolution (Days)'],
+              labels: processedPullRequests?.map(issue => issue.date) ?? ['No data'],
               datasets: [{
-                label: 'Avg. Days to Close',
-                data: [stats.avg_issue_resolution_days ?? 0],
-                backgroundColor: ['#fbc02d']
+                label: 'Pull Requests',
+                data: processedPullRequests?.map(issue => issue.count) ?? [0],
+                borderColor: 'teal',
+                tension: 0.4,
               }]
             }}
           />

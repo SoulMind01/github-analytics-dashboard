@@ -21,6 +21,8 @@ def get_contributors(repo):
     return fetch_github_json(url)
 
 def get_issues(repo, number=100):
+    if number == 0:
+        return []
     url = f"https://api.github.com/repos/{repo}/issues?state=all&per_page={number}"
     return fetch_github_json(url)
 
@@ -37,14 +39,20 @@ def calculate_avg_issue_resolution(issues):
     return None
 
 def get_pull_requests(repo, number=10):
+    if number == 0:
+        return []
     url = f"https://api.github.com/repos/{repo}/pulls?state=all&per_page={number}"
     return fetch_github_json(url)
 
 def get_releases(repo, number=10):
+    if number == 0:
+        return []
     url = f"https://api.github.com/repos/{repo}/releases?per_page={number}"
     return fetch_github_json(url)
 
 def get_commits(repo, number=10):
+    if number == 0:
+        return []
     url = f"https://api.github.com/repos/{repo}/commits?per_page={number}"
     return fetch_github_json(url)
 
@@ -60,12 +68,15 @@ def lambda_handler(event, context):
 
     try:
         contributors = get_contributors(repo)
-        issues = get_issues(repo)
-
+        issues = get_issues(repo, issuesNumber)
+        pull_requests = get_pull_requests(repo, pullRequestsNumber)
+        releases = get_releases(repo, releasesNumber)
+        commits = get_commits(repo, commitsNumber)
+        issuesNumber = int(body.get("issuesNumber", 100))
+        commitsNumber = int(body.get("commitsNumber", 5))
+        pullRequestsNumber = int(body.get("pullRequestsNumber", 10))
+        releasesNumber = int(body.get("releasesNumber", 0))
         avg_resolution = calculate_avg_issue_resolution(issues)
-        pull_requests = get_pull_requests(repo)
-        releases = get_releases(repo)
-        commits = get_commits(repo)
         # Mock CI/CD results
         success_count = 87
         failure_count = 13
